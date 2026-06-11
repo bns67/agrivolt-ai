@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriVolt AI - Basic Tier</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8 font-sans">
+
+    <div class="max-w-4xl mx-auto space-y-6">
+        <header class="flex justify-between items-center bg-white p-6 rounded shadow">
+            <h1 class="text-2xl font-bold text-green-700">AgriVolt AI Dashboard</h1>
+            <a href="b2b.html" class="text-blue-600 hover:underline">B2B Hardware Deals</a>
+        </header>
+
+        <div class="bg-white p-6 rounded shadow">
+            <h2 class="text-xl font-semibold mb-4">Yield Predictor</h2>
+            
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <select id="cropType" class="border p-2 rounded">
+                    <option value="tomato">Tomatoes (Fruiting)</option>
+                    <option value="lettuce">Lettuce (Leafy)</option>
+                    <option value="potato">Potatoes (Root)</option>
+                </select>
+                <input type="number" id="shading" placeholder="Shading % (e.g. 45)" class="border p-2 rounded">
+                <input type="number" id="temp" placeholder="Temp °C (e.g. 32)" class="border p-2 rounded">
+                <input type="number" id="moisture" placeholder="Moisture % (e.g. 60)" class="border p-2 rounded">
+            </div>
+            
+            <button onclick="runPrediction()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Predict Yield</button>
+            
+            <div class="mt-4 p-4 bg-gray-50 border rounded">
+                <p>Predicted Yield: <span id="yieldResult" class="font-bold text-lg text-blue-600">--</span> kg</p>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded shadow">
+            <h2 class="text-xl font-semibold mb-4">AI Agronomist</h2>
+            <div id="chatWindow" class="h-32 overflow-y-auto mb-4 p-4 border rounded bg-gray-50">
+                <p class="text-gray-500 italic">Chat will appear here...</p>
+            </div>
+            <div class="flex gap-2">
+                <input type="text" id="userQuestion" placeholder="Ask about your yield..." class="flex-1 border p-2 rounded">
+                <button onclick="askAI()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Ask</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
