@@ -1,5 +1,5 @@
 # AgriVolt AI - MVP Platform
-A centralized SaaS platform designed for agrivoltaics, predicting crop yields based on solar microclimates and providing AI-driven agronomy advice.
+A centralised SaaS platform designed for agrivoltaics, predicting crop yields based on solar microclimates and providing AI-driven agronomy advice.
 
 ## Team
 * **Akmal:** Project Coordination & Data Engineering
