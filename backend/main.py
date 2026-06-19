@@ -71,3 +71,5 @@ def ask_agronomist(data: ChatbotRequest):
     ai_answer = f"Hello! I see your {data.crop_type} is at {data.shading_percent}% shading. To improve the {data.current_yield}kg yield, ensure irrigation is steady."
     
     return {"reply": ai_answer}
+
+#test
