@@ -1,73 +1,92 @@
+import os
+import joblib
+import pandas as pd
+from typing import Optional
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-import os
-# import joblib
-# import google.generativeai as genai
+from dotenv import load_dotenv
+import google.generativeai as genai
 
+# 1. AI Configuration
+load_dotenv()
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+model = genai.GenerativeModel('models/gemini-2.5-flash')
+
+# 2. Server Setup
 app = FastAPI(title="AgriVolt AI API")
 
-# Allow the frontend to communicate with this backend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # Allows all origins for local testing
+    allow_origins=["*"], 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# --- DATA MODELS ---
+# 3. Load the Trained Machine Learning Model
+# This path works because you run uvicorn from the root agrivolt-ai folder
+try:
+    ml_model = joblib.load("backend/yield_model.joblib")
+    print("Machine Learning model loaded successfully!")
+except Exception as e:
+    ml_model = None
+    print(f"Warning: ML model not found. {e}")
+
+# 4. Data Structure Definition
 class FarmData(BaseModel):
     crop_type: str
     shading_percent: float
     temperature_c: float
     soil_moisture: float
+    user_message: Optional[str] = ""  # Made optional so the ML endpoint doesn't require a chat message
 
-class ChatbotRequest(BaseModel):
-    crop_type: str
-    shading_percent: float
-    current_yield: float
-    user_question: str
-
-# --- ENDPOINTS ---
+# ==========================================
+# ENDPOINT 1: Machine Learning Yield Predictor
+# ==========================================
 @app.post("/api/predict")
-def predict_yield(data: FarmData):
-    # TODO for Hani (Week 3): Load the .pkl models and replace this dummy logic
-    predicted_yield = 0.0
+async def predict_yield(data: FarmData):
+    if not ml_model:
+        return {"error": "Model not loaded on server."}
     
-    if data.crop_type == "tomato":
-        predicted_yield = 85.5 
-    elif data.crop_type == "lettuce":
-        predicted_yield = 92.0 
-    elif data.crop_type == "potato":
-        predicted_yield = 78.2 
-    else:
-        return {"error": "Crop not supported"}
+    try:
+        # Translate the frontend data into the Pandas DataFrame the pipeline expects
+        input_df = pd.DataFrame([{
+            'crop_type': data.crop_type,
+            'shading_percent': data.shading_percent,
+            'temperature_c': data.temperature_c,
+            'soil_moisture': data.soil_moisture
+        }])
+        
+        # Run the AI prediction
+        predicted_yield = ml_model.predict(input_df)[0]
+        
+        # Return the number rounded to 2 decimal places
+        return {"yield_kg_m2": round(predicted_yield, 2)}
+        
+    except Exception as e:
+        return {"error": str(e)}
 
-    return {
-        "status": "success",
-        "crop": data.crop_type,
-        "predicted_yield_kg": predicted_yield
-    }
-
+# ==========================================
+# ENDPOINT 2: Gemini Agronomist Chatbot
+# ==========================================
 @app.post("/api/chat")
-def ask_agronomist(data: ChatbotRequest):
-    # TODO for Hani (Week 2): Add the real API key and uncomment the genai logic
+async def chat_with_agronomist(data: FarmData):
+    system_prompt = f"""
+    You are the AgriVolt AI Agronomist, an expert in agrivoltaics and crop microclimates.
     
-    system_context = f"""
-    You are an expert agronomist in Malaysia. 
-    The farmer is growing {data.crop_type} under solar panels. 
-    Currently, the panels are causing {data.shading_percent}% shading. 
-    The predicted yield is {data.current_yield} kg.
-    Keep your answer under 3 sentences, use plain language, and be helpful.
+    Current Farm Context:
+    - Crop: {data.crop_type}
+    - Solar Panel Shading: {data.shading_percent}%
+    - Ambient Temperature: {data.temperature_c}°C
+    - Soil Moisture: {data.soil_moisture}%
+    
+    The farmer is asking the following question: "{data.user_message}"
+    
+    Provide a helpful, direct, and scientifically accurate response based on their specific crop and current environmental metrics. Keep the response concise and actionable.
     """
-    
-    # genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
-    # model = genai.GenerativeModel('gemini-pro')
-    # response = model.generate_content(f"{system_context}\n\nFarmer asks: {data.user_question}")
-    # ai_answer = response.text
-    
-    # Dummy response for Week 1/2 UI testing
-    ai_answer = f"Hello! I see your {data.crop_type} is at {data.shading_percent}% shading. To improve the {data.current_yield}kg yield, ensure irrigation is steady."
-    
-    return {"reply": ai_answer}
+    try:
+        response = model.generate_content(system_prompt)
+        return {"reply": response.text}
+    except Exception as e:
+        return {"reply": f"System Error: {str(e)}"}

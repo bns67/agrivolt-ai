@@ -3,49 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AgriVolt AI - Basic Tier</title>
+    <title>AgriVolt AI Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 p-8 font-sans">
+<body class="bg-gray-50 font-sans text-gray-800">
 
-    <div class="max-w-4xl mx-auto space-y-6">
-        <header class="flex justify-between items-center bg-white p-6 rounded shadow">
-            <h1 class="text-2xl font-bold text-green-700">AgriVolt AI Dashboard</h1>
-            <a href="b2b.html" class="text-blue-600 hover:underline">B2B Hardware Deals</a>
-        </header>
-
-        <div class="bg-white p-6 rounded shadow">
-            <h2 class="text-xl font-semibold mb-4">Yield Predictor</h2>
-            
-            <div class="grid grid-cols-2 gap-4 mb-4">
-                <select id="cropType" class="border p-2 rounded">
-                    <option value="tomato">Tomatoes (Fruiting)</option>
-                    <option value="lettuce">Lettuce (Leafy)</option>
-                    <option value="potato">Potatoes (Root)</option>
-                </select>
-                <input type="number" id="shading" placeholder="Shading % (e.g. 45)" class="border p-2 rounded">
-                <input type="number" id="temp" placeholder="Temp °C (e.g. 32)" class="border p-2 rounded">
-                <input type="number" id="moisture" placeholder="Moisture % (e.g. 60)" class="border p-2 rounded">
-            </div>
-            
-            <button onclick="runPrediction()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Predict Yield</button>
-            
-            <div class="mt-4 p-4 bg-gray-50 border rounded">
-                <p>Predicted Yield: <span id="yieldResult" class="font-bold text-lg text-blue-600">--</span> kg</p>
-            </div>
+    <nav class="bg-green-700 text-white p-4 shadow-md">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold tracking-wide">AgriVolt AI</h1>
+            <a href="b2b.html" class="hover:text-green-200 transition">Partner Program (B2B)</a>
         </div>
+    </nav>
 
-        <div class="bg-white p-6 rounded shadow">
-            <h2 class="text-xl font-semibold mb-4">AI Agronomist</h2>
-            <div id="chatWindow" class="h-32 overflow-y-auto mb-4 p-4 border rounded bg-gray-50">
-                <p class="text-gray-500 italic">Chat will appear here...</p>
+    <main class="max-w-7xl mx-auto p-6 grid grid-cols-1 md:grid-cols-12 gap-6 mt-6">
+        
+        <section class="md:col-span-4 bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+            <h2 class="text-xl font-semibold mb-4 text-green-800 border-b pb-2">Farm Parameters</h2>
+            <form id="predictionForm" class="space-y-4">
+                
+                <div>
+                    <label class="block text-sm font-medium mb-1">Crop Type</label>
+                    <select id="cropType" class="w-full border border-gray-300 rounded p-2 focus:ring-2 focus:ring-green-500">
+                        <option value="Tomato">Tomato</option>
+                        <option value="Lettuce">Lettuce</option>
+                        <option value="Pepper">Pepper</option>
+                        <option value="Cucumber">Cucumber</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium mb-1">Panel Shading (%)</label>
+                    <input type="number" id="shading" value="30" min="0" max="100" step="0.1" class="w-full border border-gray-300 rounded p-2">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium mb-1">Avg Temperature (°C)</label>
+                    <input type="number" id="temperature" value="28.5" step="0.1" class="w-full border border-gray-300 rounded p-2">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium mb-1">Soil Moisture (%)</label>
+                    <input type="number" id="moisture" value="65" min="0" max="100" class="w-full border border-gray-300 rounded p-2">
+                </div>
+
+                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded mt-4 transition">
+                    Run AI Prediction
+                </button>
+            </form>
+        </section>
+
+        <section class="md:col-span-8 space-y-6">
+            
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                <h2 class="text-xl font-semibold mb-4 text-green-800 border-b pb-2">Yield Forecast</h2>
+                
+                <div id="resultsContainer" class="hidden">
+                    <div class="flex items-center space-x-4 mb-4">
+                        <div class="bg-green-100 p-4 rounded-lg text-center">
+                            <p class="text-sm text-green-800 font-semibold uppercase">Estimated Yield</p>
+                            <p id="yieldValue" class="text-3xl font-bold text-green-700">-- kg/m²</p>
+                        </div>
+                        <p class="text-sm text-gray-500 italic">
+                            *Note: 60% Machine Learning Accuracy (Pending Improvements).
+                        </p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div>
+                            <h3 class="font-semibold text-gray-700">AI Diagnostic Justification:</h3>
+                            <p id="justificationText" class="text-gray-600 text-sm mt-1 bg-gray-50 p-3 rounded border border-gray-200">
+                                Generating analysis...
+                            </p>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-gray-700">Prescriptive Suggestions:</h3>
+                            <p id="suggestionsText" class="text-gray-600 text-sm mt-1 bg-gray-50 p-3 rounded border border-gray-200">
+                                Generating recommendations...
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="emptyState" class="text-center text-gray-400 py-10">
+                    Enter your parameters and click "Run AI Prediction" to see forecasts.
+                </div>
             </div>
-            <div class="flex gap-2">
-                <input type="text" id="userQuestion" placeholder="Ask about your yield..." class="flex-1 border p-2 rounded">
-                <button onclick="askAI()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Ask</button>
+
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 flex flex-col h-[400px]">
+                <h2 class="text-xl font-semibold mb-4 text-green-800 border-b pb-2">AI Agronomist Chat</h2>
+                
+                <div id="chatBox" class="flex-grow overflow-y-auto bg-gray-50 rounded border border-gray-200 p-4 mb-4 space-y-3">
+                    <div class="text-sm text-gray-500 text-center">Ask a specific question about your crop setup!</div>
+                </div>
+
+                <div class="flex space-x-2">
+                    <input type="text" id="chatMessage" placeholder="E.g., Are these temperatures safe for my tomatoes?" class="flex-grow border border-gray-300 rounded p-2 focus:ring-2 focus:ring-green-500">
+                    <button id="sendChatBtn" class="bg-gray-800 hover:bg-gray-900 text-white font-bold py-2 px-6 rounded transition">
+                        Send
+                    </button>
+                </div>
             </div>
-        </div>
-    </div>
+
+        </section>
+    </main>
 
     <script src="app.js"></script>
 </body>
