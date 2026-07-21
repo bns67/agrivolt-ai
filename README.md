@@ -2,7 +2,7 @@
 A centralised SaaS platform designed for agrivoltaics, predicting crop yields based on solar microclimates and providing AI-driven agronomy advice.
 
 ## Team
-* **Akmal:** Project Coordination & Data Engineering
+* **Akmal:** Project Coordination, Full Stack Development, & Data Engineering
 * **Hani:** Backend & Machine Learning (FastAPI, Scikit-learn)
 * **Danish:** Frontend UI/UX (HTML, JS, Tailwind)
 * **Aiman:** Business Strategy & B2B Economics
