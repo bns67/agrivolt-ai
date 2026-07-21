@@ -1,26 +1,49 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AgriVolt Partners | Empowering Agrivoltaics</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
 </head>
-<body class="bg-gray-50 font-sans text-gray-800">
+<body class="bg-gray-50 dark:bg-gray-900 font-sans text-gray-800 dark:text-gray-200 transition-colors duration-300">
 
-    <nav class="bg-gray-900 text-white p-4 shadow-md">
+    <nav class="bg-gray-900 dark:bg-black text-white p-4 shadow-md">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <h1 class="text-2xl font-bold tracking-wide text-green-400">AgriVolt <span class="text-white">Partners</span></h1>
-            <a href="index.html" class="hover:text-green-400 transition">← Back to Farm Dashboard</a>
+            
+            <div class="flex items-center space-x-6">
+                <a href="index.html" class="hover:text-green-400 transition">← Back to Farm Dashboard</a>
+                
+                <!-- NEW: Enterprise Navigation Link -->
+                <a href="premium.html" class="text-yellow-500 hover:text-yellow-400 font-semibold transition flex items-center">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    Enterprise PoC
+                </a>
+                
+                <button id="theme-toggle" type="button" class="text-gray-300 hover:text-white focus:outline-none rounded-lg text-sm p-1 transition">
+                    <svg id="theme-toggle-dark-icon" class="hidden w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                    </svg>
+                    <svg id="theme-toggle-light-icon" class="hidden w-6 h-6 text-yellow-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path>
+                    </svg>
+                </button>
+            </div>
         </div>
     </nav>
 
-    <header class="bg-white border-b border-gray-200 py-20">
+    <header class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 py-20 transition-colors duration-300">
         <div class="max-w-7xl mx-auto px-6 text-center">
-            <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6">
-                Turn Solar Shading into <span class="text-green-600">Agricultural Yield</span>
+            <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white mb-6">
+                Turn Solar Shading into <span class="text-green-600 dark:text-green-400">Agricultural Yield</span>
             </h2>
-            <p class="text-xl text-gray-600 max-w-3xl mx-auto mb-10">
+            <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-10">
                 Partner with AgriVolt AI to provide local farmers with cutting-edge microclimate software. Boost your ESG scores, improve community relations, and maximize the efficiency of dual-use agrivoltaic land.
             </p>
             <a href="#partner-form" class="bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-8 rounded-lg shadow-lg transition transform hover:-translate-y-1">
@@ -31,69 +54,164 @@
 
     <section class="max-w-7xl mx-auto p-6 py-16 grid grid-cols-1 md:grid-cols-3 gap-8">
         
-        <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 text-center">
-            <div class="bg-green-100 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-6">
-                <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+        <div class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 text-center transition-colors">
+            <div class="bg-green-100 dark:bg-green-900 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-6">
+                <svg class="w-8 h-8 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
             </div>
-            <h3 class="text-xl font-bold text-gray-900 mb-3">ESG Compliance</h3>
-            <p class="text-gray-600">Demonstrate tangible commitment to sustainable agriculture and local food security to stakeholders and regulators.</p>
+            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">ESG Compliance</h3>
+            <p class="text-gray-600 dark:text-gray-400">Demonstrate tangible commitment to sustainable agriculture and local food security to stakeholders and regulators.</p>
         </div>
 
-        <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 text-center">
-            <div class="bg-blue-100 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-6">
-                <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+        <div class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 text-center transition-colors">
+            <div class="bg-blue-100 dark:bg-blue-900 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-6">
+                <svg class="w-8 h-8 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
             </div>
-            <h3 class="text-xl font-bold text-gray-900 mb-3">Community Goodwill</h3>
-            <p class="text-gray-600">Subsidize software for local farmers operating under your panels, fostering strong, mutually beneficial community relationships.</p>
+            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Community Goodwill</h3>
+            <p class="text-gray-600 dark:text-gray-400">Subsidize software for local farmers operating under your panels, fostering strong, mutually beneficial community relationships.</p>
         </div>
 
-        <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 text-center">
-            <div class="bg-purple-100 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-6">
-                <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+        <div class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 text-center transition-colors">
+            <div class="bg-purple-100 dark:bg-purple-900 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-6">
+                <svg class="w-8 h-8 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
             </div>
-            <h3 class="text-xl font-bold text-gray-900 mb-3">Microclimate Data</h3>
-            <p class="text-gray-600">Gain access to anonymized, aggregated thermal and moisture data beneath your arrays to optimize panel cooling strategies.</p>
+            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Microclimate Data</h3>
+            <p class="text-gray-600 dark:text-gray-400">Gain access to anonymized, aggregated thermal and moisture data beneath your arrays to optimize panel cooling strategies.</p>
         </div>
 
     </section>
 
-    <section id="partner-form" class="bg-gray-900 py-16">
-        <div class="max-w-3xl mx-auto bg-white p-10 rounded-xl shadow-2xl">
-            <h2 class="text-3xl font-bold text-gray-900 mb-2 text-center">Start a Partnership</h2>
-            <p class="text-gray-500 text-center mb-8">Leave your details below and our Business Development team will reach out within 24 hours.</p>
+    <section id="partner-form" class="bg-gray-900 dark:bg-black py-16 transition-colors duration-300">
+        <div class="max-w-3xl mx-auto bg-white dark:bg-gray-800 p-10 rounded-xl shadow-2xl transition-colors">
+            <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-2 text-center">Start a Partnership</h2>
+            <p class="text-gray-500 dark:text-gray-400 text-center mb-8">Leave your details below and our Business Development team will reach out within 24 hours.</p>
             
-            <form action="https://formspree.io/f/mnjknzre" method="POST" class="space-y-6">
+            <form id="b2bForm" class="space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Company Name</label>
-                        <input type="text" name="Company_Name" required class="w-full border border-gray-300 rounded-md p-3 focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Company Name</label>
+                        <input type="text" id="companyName" required class="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md p-3 focus:ring-2 focus:ring-green-500 transition">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Contact Person</label>
-                        <input type="text" name="Contact_Person" required class="w-full border border-gray-300 rounded-md p-3 focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Contact Person</label>
+                        <input type="text" id="contactPerson" required class="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md p-3 focus:ring-2 focus:ring-green-500 transition">
                     </div>
                 </div>
                 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Corporate Email</label>
-                    <input type="email" name="Email" required class="w-full border border-gray-300 rounded-md p-3 focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Corporate Email</label>
+                    <input type="email" id="corporateEmail" required class="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md p-3 focus:ring-2 focus:ring-green-500 transition">
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Estimated Solar Acreage</label>
-                    <select name="Solar_Acreage" class="w-full border border-gray-300 rounded-md p-3 focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Estimated Solar Acreage</label>
+                    <select id="solarAcreage" class="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md p-3 focus:ring-2 focus:ring-green-500 transition">
                         <option>< 10 Acres</option>
                         <option>10 - 50 Acres</option>
                         <option>50+ Acres</option>
                     </select>
                 </div>
 
-                <button type="submit" class="w-full bg-gray-900 hover:bg-black text-white font-bold py-4 rounded-md transition duration-200">
+                <button type="submit" id="submitBtn" class="w-full bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600 text-white font-bold py-4 rounded-md transition duration-200">
                     Request Partnership Deck
                 </button>
+                
+                <div id="successMessage" class="hidden mt-4 p-4 bg-green-100 text-green-800 rounded-md text-center font-medium">
+                    Thank you! Your request has been successfully submitted and stored.
+                </div>
             </form>
         </div>
     </section>
 
+    <script>
+        // --- Dark Mode Logic ---
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const darkIcon = document.getElementById('theme-toggle-dark-icon');
+        const lightIcon = document.getElementById('theme-toggle-light-icon');
+
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            lightIcon.classList.remove('hidden');
+            document.documentElement.classList.add('dark');
+        } else {
+            darkIcon.classList.remove('hidden');
+            document.documentElement.classList.remove('dark');
+        }
+
+        themeToggleBtn.addEventListener('click', function() {
+            darkIcon.classList.toggle('hidden');
+            lightIcon.classList.toggle('hidden');
+
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('color-theme', 'light');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('color-theme', 'dark');
+            }
+        });
+
+        // --- Dual Form Submission Logic ---
+        document.getElementById('b2bForm').addEventListener('submit', async (e) => {
+            e.preventDefault(); // Stop standard form submission
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const successMessage = document.getElementById('successMessage');
+            
+            // UI Feedback
+            submitBtn.innerText = "Processing Request...";
+            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-75', 'cursor-not-allowed');
+
+            // Gather Data
+            const formData = {
+                Company_Name: document.getElementById('companyName').value,
+                Contact_Person: document.getElementById('contactPerson').value,
+                Email: document.getElementById('corporateEmail').value,
+                Solar_Acreage: document.getElementById('solarAcreage').value
+            };
+
+            try {
+                // 1. Send to Formspree for your instant email notification
+                const formspreeResponse = fetch("https://formspree.io/f/mnjknzre", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                // 2. Send to your FastAPI Backend to store in your new database
+                // Note: Ensure your FastAPI backend handles CORS correctly for this endpoint!
+                const databaseResponse = fetch("http://127.0.0.1:8000/api/partnerships", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                // Wait for both requests to finish simultaneously
+                await Promise.all([formspreeResponse, databaseResponse]);
+
+                // Show success state
+                document.getElementById('b2bForm').reset();
+                submitBtn.innerText = "Request Partnership Deck";
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+                successMessage.classList.remove('hidden');
+
+                // Hide success message after 5 seconds
+                setTimeout(() => {
+                    successMessage.classList.add('hidden');
+                }, 5000);
+
+            } catch (error) {
+                console.error("Submission failed:", error);
+                submitBtn.innerText = "Error. Try Again.";
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+            }
+        });
+    </script>
 </body>
 </html>

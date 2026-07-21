@@ -1,29 +1,62 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AgriVolt AI Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
 </head>
-<body class="bg-gray-50 font-sans text-gray-800">
+<body class="bg-gray-50 dark:bg-gray-900 font-sans text-gray-800 dark:text-gray-200 transition-colors duration-300">
 
-    <nav class="bg-green-700 text-white p-4 shadow-md">
+    <nav class="bg-gray-900 dark:bg-black text-white p-4 shadow-md">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <h1 class="text-2xl font-bold tracking-wide">AgriVolt AI</h1>
-            <a href="b2b.html" class="hover:text-green-200 transition">Partner Program (B2B)</a>
+            <h1 class="text-2xl font-bold tracking-wide text-green-400">AgriVolt <span class="text-white">AI</span></h1>
+            
+            <div class="flex items-center space-x-6">
+                <a href="b2b.html" class="hover:text-green-400 transition">Partner Program (B2B)</a>
+                
+                <!-- NEW: Enterprise Navigation Link -->
+                <a href="premium.html" class="text-yellow-500 hover:text-yellow-400 font-semibold transition flex items-center">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    Enterprise PoC
+                </a>
+                
+                <button id="theme-toggle" type="button" class="text-gray-300 hover:text-white focus:outline-none rounded-lg text-sm p-1 transition">
+                    <svg id="theme-toggle-dark-icon" class="hidden w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                    </svg>
+                    <svg id="theme-toggle-light-icon" class="hidden w-6 h-6 text-yellow-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path>
+                    </svg>
+                </button>
+            </div>
         </div>
     </nav>
 
     <main class="max-w-7xl mx-auto p-6 grid grid-cols-1 md:grid-cols-12 gap-6 mt-6">
         
-        <section class="md:col-span-4 bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-            <h2 class="text-xl font-semibold mb-4 text-green-800 border-b pb-2">Farm Parameters</h2>
+        <section class="md:col-span-4 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 transition-colors duration-300">
+            <h2 class="text-xl font-semibold mb-4 text-green-800 dark:text-green-400 border-b border-gray-200 dark:border-gray-700 pb-2">Farm Parameters</h2>
             <form id="predictionForm" class="space-y-4">
                 
                 <div>
-                    <label class="block text-sm font-medium mb-1">Crop Type</label>
-                    <select id="cropType" class="w-full border border-gray-300 rounded p-2 focus:ring-2 focus:ring-green-500">
+                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">Environment Type</label>
+                    <select id="envType" class="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded p-2 focus:ring-2 focus:ring-green-500 transition">
+                        <option value="agrivoltaic" selected>Agrivoltaic (Solar Panels)</option>
+                        <option value="open_field">Open-Field (Traditional)</option>
+                        <option value="greenhouse">Greenhouse</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">Crop Type</label>
+                    <select id="cropType" class="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded p-2 focus:ring-2 focus:ring-green-500 transition" required>
+                        <option value="" disabled selected>Select your crop type</option>
                         <option value="Tomato">Tomato</option>
                         <option value="Lettuce">Lettuce</option>
                         <option value="Pepper">Pepper</option>
@@ -31,19 +64,35 @@
                     </select>
                 </div>
 
-                <div>
-                    <label class="block text-sm font-medium mb-1">Panel Shading (%)</label>
-                    <input type="number" id="shading" value="30" min="0" max="100" step="0.1" class="w-full border border-gray-300 rounded p-2">
+                <div id="shadingContainer" class="transition-all duration-300">
+                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">Panel Shading (%)</label>
+                    <input type="number" id="shading" placeholder="Enter your panel shading" min="0" max="100" step="0.1" class="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded p-2 transition">
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium mb-1">Avg Temperature (°C)</label>
-                    <input type="number" id="temperature" value="28.5" step="0.1" class="w-full border border-gray-300 rounded p-2">
+                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">Avg Temperature (°C)</label>
+                    <input type="number" id="temperature" placeholder="Enter your temperature" step="0.1" class="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded p-2 transition" required>
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium mb-1">Soil Moisture (%)</label>
-                    <input type="number" id="moisture" value="65" min="0" max="100" class="w-full border border-gray-300 rounded p-2">
+                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">Soil Moisture (%)</label>
+                    <input type="number" id="moisture" placeholder="Enter your soil moisture" min="0" max="100" class="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded p-2 transition" required>
+                </div>
+
+                <div class="pt-2 border-t border-gray-100 dark:border-gray-700 mt-2">
+                    <div class="flex items-center space-x-2 mb-3">
+                        <input type="checkbox" id="microFarmMode" class="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500">
+                        <label for="microFarmMode" class="text-sm font-medium text-gray-700 dark:text-gray-300">Enable Micro-Farm Mode (Campus/Urban)</label>
+                    </div>
+
+                    <div id="areaContainer" class="hidden transition-all duration-300">
+                        <label class="block text-sm font-medium mb-1 dark:text-gray-300">Growing Area (m²)</label>
+                        <input type="number" id="growingArea" placeholder="e.g., 2.5" step="0.1" min="0.1" value="1" class="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded p-2 transition">
+                        
+                        <p class="text-xs text-gray-500 dark:text-gray-400 italic mt-2 leading-tight">
+                            * In case you're wondering: Total space isn't needed for non-micro calculations! For commercial farms, the AI natively predicts maximum yield efficiency per square meter (kg/m²).
+                        </p>
+                    </div>
                 </div>
 
                 <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded mt-4 transition">
@@ -54,51 +103,85 @@
 
         <section class="md:col-span-8 space-y-6">
             
-            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-                <h2 class="text-xl font-semibold mb-4 text-green-800 border-b pb-2">Yield Forecast</h2>
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 transition-colors duration-300">
+                <h2 class="text-xl font-semibold mb-4 text-green-800 dark:text-green-400 border-b border-gray-200 dark:border-gray-700 pb-2">Yield Forecast</h2>
                 
                 <div id="resultsContainer" class="hidden">
                     <div class="flex items-center space-x-4 mb-4">
-                        <div class="bg-green-100 p-4 rounded-lg text-center">
-                            <p class="text-sm text-green-800 font-semibold uppercase">Estimated Yield</p>
-                            <p id="yieldValue" class="text-3xl font-bold text-green-700">-- kg/m²</p>
+                        <!-- Existing Yield Box -->
+                        <div id="yieldBox" class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg text-center min-w-[150px] transition-all duration-500 shadow-sm border border-transparent">
+                            <p id="yieldLabel" class="text-sm text-gray-500 dark:text-gray-300 font-semibold uppercase transition-colors">Estimated Yield</p>
+                            <p id="yieldValue" class="text-3xl font-bold text-gray-800 dark:text-white transition-colors">--</p>
                         </div>
-                        <p class="text-sm text-gray-500 italic">
+
+                        <!-- NEW: Harvest Time Box -->
+                        <div id="timeBox" class="bg-blue-50 dark:bg-blue-900/30 p-4 rounded-lg text-center min-w-[150px] transition-all duration-500 shadow-sm border border-blue-100 dark:border-blue-800">
+                            <p class="text-sm text-blue-800 dark:text-blue-300 font-semibold uppercase transition-colors">Est. Harvest</p>
+                            <p id="harvestTimeValue" class="text-2xl font-bold text-blue-900 dark:text-blue-100 transition-colors">--</p>
+                        </div>
+
+                        <p class="text-sm text-gray-500 dark:text-gray-400 italic flex-1">
                             *Note: 60% Machine Learning Accuracy (Pending Improvements).
                         </p>
                     </div>
 
                     <div class="space-y-4">
+                        <!-- Justification Section -->
                         <div>
-                            <h3 class="font-semibold text-gray-700">AI Diagnostic Justification:</h3>
-                            <p id="justificationText" class="text-gray-600 text-sm mt-1 bg-gray-50 p-3 rounded border border-gray-200">
-                                Generating analysis...
-                            </p>
+                            <h3 class="font-semibold text-gray-700 dark:text-gray-300">AI Diagnostic Justification:</h3>
+                            <div class="bg-gray-50 dark:bg-gray-700 p-3 rounded border border-gray-200 dark:border-gray-600 transition-colors mt-1">
+                                <p id="justificationShort" class="text-gray-800 dark:text-gray-200 text-sm font-medium">
+                                    Generating summary...
+                                </p>
+                                <p id="justificationDetail" class="text-gray-600 dark:text-gray-400 text-sm mt-2 hidden border-t border-gray-200 dark:border-gray-600 pt-2">
+                                    <!-- Detailed text will appear here -->
+                                </p>
+                            </div>
                         </div>
+                        
+                        <!-- Suggestions Section -->
                         <div>
-                            <h3 class="font-semibold text-gray-700">Prescriptive Suggestions:</h3>
-                            <p id="suggestionsText" class="text-gray-600 text-sm mt-1 bg-gray-50 p-3 rounded border border-gray-200">
-                                Generating recommendations...
-                            </p>
+                            <h3 class="font-semibold text-gray-700 dark:text-gray-300">Prescriptive Suggestions:</h3>
+                            <div class="bg-gray-50 dark:bg-gray-700 p-3 rounded border border-gray-200 dark:border-gray-600 transition-colors mt-1">
+                                <p id="suggestionsShort" class="text-gray-800 dark:text-gray-200 text-sm font-medium">
+                                    Generating recommendations...
+                                </p>
+                                <p id="suggestionsDetail" class="text-gray-600 dark:text-gray-400 text-sm mt-2 hidden border-t border-gray-200 dark:border-gray-600 pt-2">
+                                    <!-- Detailed text will appear here -->
+                                </p>
+                            </div>
                         </div>
+                        
+                        <!-- Read More Toggle -->
+                        <button id="readMoreBtn" type="button" class="text-sm text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 font-semibold hidden focus:outline-none">
+                            + Read Detailed Analysis
+                        </button>
                     </div>
                 </div>
                 
-                <div id="emptyState" class="text-center text-gray-400 py-10">
+                <div id="emptyState" class="text-center text-gray-400 dark:text-gray-500 py-10">
                     Enter your parameters and click "Run AI Prediction" to see forecasts.
                 </div>
             </div>
 
-            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 flex flex-col h-[400px]">
-                <h2 class="text-xl font-semibold mb-4 text-green-800 border-b pb-2">AI Agronomist Chat</h2>
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col h-[400px] transition-colors duration-300">
+                <h2 class="text-xl font-semibold mb-4 text-green-800 dark:text-green-400 border-b border-gray-200 dark:border-gray-700 pb-2">AI Agronomist Chat</h2>
                 
-                <div id="chatBox" class="flex-grow overflow-y-auto bg-gray-50 rounded border border-gray-200 p-4 mb-4 space-y-3">
-                    <div class="text-sm text-gray-500 text-center">Ask a specific question about your crop setup!</div>
+                <div id="chatBox" class="flex-grow overflow-y-auto bg-gray-50 dark:bg-gray-700 rounded border border-gray-200 dark:border-gray-600 p-4 mb-2 space-y-3 transition-colors">
+                    <div class="text-sm text-gray-500 dark:text-gray-400 text-center">Ask a specific question about your crop setup!</div>
+                </div>
+
+                <div id="chatLoader" class="hidden text-sm text-green-700 dark:text-green-400 font-medium italic mb-3 px-2 flex items-center">
+                    <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-green-600 dark:text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    AgriVolt AI is thinking...
                 </div>
 
                 <div class="flex space-x-2">
-                    <input type="text" id="chatMessage" placeholder="E.g., Are these temperatures safe for my tomatoes?" class="flex-grow border border-gray-300 rounded p-2 focus:ring-2 focus:ring-green-500">
-                    <button id="sendChatBtn" class="bg-gray-800 hover:bg-gray-900 text-white font-bold py-2 px-6 rounded transition">
+                    <input type="text" id="chatMessage" placeholder="E.g., Are these temperatures safe for my tomatoes?" class="flex-grow border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded p-2 focus:ring-2 focus:ring-green-500 transition">
+                    <button id="sendChatBtn" class="bg-gray-900 dark:bg-gray-700 hover:bg-black dark:hover:bg-gray-600 text-white font-bold py-2 px-6 rounded transition">
                         Send
                     </button>
                 </div>
@@ -108,5 +191,33 @@
     </main>
 
     <script src="app.js"></script>
+
+    <script>
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const darkIcon = document.getElementById('theme-toggle-dark-icon');
+        const lightIcon = document.getElementById('theme-toggle-light-icon');
+
+        // Initial setup based on localStorage or OS preference
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            lightIcon.classList.remove('hidden');
+            document.documentElement.classList.add('dark');
+        } else {
+            darkIcon.classList.remove('hidden');
+            document.documentElement.classList.remove('dark');
+        }
+
+        themeToggleBtn.addEventListener('click', function() {
+            darkIcon.classList.toggle('hidden');
+            lightIcon.classList.toggle('hidden');
+
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('color-theme', 'light');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('color-theme', 'dark');
+            }
+        });
+    </script>
 </body>
 </html>

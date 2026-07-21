@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriVolt Enterprise | Live Telemetry</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 font-sans text-gray-800 dark:text-gray-200 transition-colors duration-300">
+
+    <!-- Access Control Modal Overlay -->
+    <div id="authModal" class="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-lg max-w-md w-full p-6 shadow-xl border border-gray-200 dark:border-gray-700">
+            <div class="text-center mb-6">
+                <span class="inline-block p-3 rounded-full bg-green-100 dark:bg-green-900/40 text-green-600 dark:text-green-400 mb-3">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                    </svg>
+                </span>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white">Enterprise Access Required</h3>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Please enter your enterprise passkey to unlock telemetry diagnostic tools.</p>
+            </div>
+
+            <form id="authForm" onsubmit="handleAuth(event)" class="space-y-4">
+                <div>
+                    <input type="password" id="passkeyInput" placeholder="Enter Passkey (e.g., ENTERPRISE2026)" required
+                        class="w-full text-sm border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg p-3 focus:ring-2 focus:ring-green-500 outline-none transition">
+                    <p id="authError" class="text-xs text-red-500 mt-1 hidden">Invalid passkey. Please try again.</p>
+                </div>
+                
+                <div class="flex space-x-3">
+                    <a href="index.html" class="w-1/2 text-center text-xs font-semibold py-3 px-4 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+                        Cancel
+                    </a>
+                    <button type="submit" class="w-1/2 bg-green-600 hover:bg-green-700 text-white text-xs font-bold py-3 px-4 rounded-lg transition shadow-md">
+                        Unlock Portal
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="bg-gray-900 dark:bg-black text-white p-4 shadow-md">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold tracking-wide text-green-400">AgriVolt <span class="text-yellow-500">Premium</span></h1>
+            
+            <div class="flex items-center space-x-6">
+                <a href="index.html" class="hover:text-green-400 transition">← Standard Dashboard</a>
+                
+                <button id="theme-toggle" type="button" class="text-gray-300 hover:text-white focus:outline-none rounded-lg text-sm p-1 transition">
+                    <svg id="theme-toggle-dark-icon" class="hidden w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                    </svg>
+                    <svg id="theme-toggle-light-icon" class="hidden w-6 h-6 text-yellow-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+        
+        <!-- Column 1: Live Telemetry Feed -->
+        <section class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 transition-colors duration-300 flex flex-col h-[420px]">
+            <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-2 mb-6">
+                <h2 class="text-xl font-semibold text-green-800 dark:text-green-400">Live Edge Node</h2>
+                <div class="flex items-center space-x-2">
+                    <span class="relative flex h-3 w-3">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                    </span>
+                    <span class="text-xs font-bold text-red-500 uppercase tracking-wider" id="liveStatus">Connecting...</span>
+                </div>
+            </div>
+
+            <div class="space-y-4 flex-grow">
+                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg flex justify-between items-center border border-gray-200 dark:border-gray-600 transition-colors">
+                    <p class="text-sm text-gray-500 dark:text-gray-400 font-medium uppercase">Ambient Temp</p>
+                    <p id="liveTemp" class="text-2xl font-bold text-gray-900 dark:text-white">-- °C</p>
+                </div>
+                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg flex justify-between items-center border border-gray-200 dark:border-gray-600 transition-colors">
+                    <p class="text-sm text-gray-500 dark:text-gray-400 font-medium uppercase">Soil Moisture</p>
+                    <p id="liveMoisture" class="text-2xl font-bold text-gray-900 dark:text-white">-- %</p>
+                </div>
+                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg flex justify-between items-center border border-gray-200 dark:border-gray-600 transition-colors">
+                    <p class="text-sm text-gray-500 dark:text-gray-400 font-medium uppercase">Panel Shading</p>
+                    <p id="liveShading" class="text-2xl font-bold text-gray-900 dark:text-white">-- %</p>
+                </div>
+            </div>
+            <p id="liveTime" class="text-xs text-gray-400 text-center mt-4 italic">Awaiting first data packet...</p>
+        </section>
+
+        <!-- Column 2: History Log -->
+        <section class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 transition-colors duration-300 flex flex-col h-[420px]">
+            <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-2 mb-4">
+                <h2 class="text-xl font-semibold text-green-800 dark:text-green-400">Telemetry History</h2>
+                <button onclick="fetchHistory()" class="text-xs bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 px-2 py-1 rounded transition">Refresh</button>
+            </div>
+            
+            <div id="historyContainer" class="flex-grow overflow-y-auto space-y-3 pr-2">
+                <div class="text-center text-gray-400 dark:text-gray-500 py-10 text-sm">
+                    Loading historical data...
+                </div>
+            </div>
+        </section>
+
+        <!-- Full Width Bottom Section: AI Hub -->
+        <section class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 transition-colors duration-300 flex flex-col lg:col-span-2 min-h-[480px]">
+            
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end border-b border-gray-200 dark:border-gray-700 pb-3 mb-6">
+                <h2 class="text-xl font-semibold text-green-800 dark:text-green-400 mb-3 sm:mb-0">AI Diagnostic Hub</h2>
+                
+                <div class="w-full sm:w-64 flex items-center space-x-2">
+                    <label class="text-sm font-medium dark:text-gray-300 whitespace-nowrap">Target Crop:</label>
+                    <select id="targetCrop" class="w-full text-sm border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white rounded p-1.5 focus:ring-2 focus:ring-green-500 transition">
+                        <option value="Tomato">Tomato</option>
+                        <option value="Lettuce">Lettuce</option>
+                        <option value="Pepper">Pepper</option>
+                        <option value="Cucumber">Cucumber</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="aiEmptyState" class="text-center text-gray-400 dark:text-gray-500 py-24 text-sm flex-grow">
+                Select an entry from the History Log and click "Analyze" to run Gemini diagnostics and open the dynamic chatbot session.
+            </div>
+
+            <!-- Stacked Layout: Diagnostics on top, Chatbot full width below -->
+            <div id="aiResultsContainer" class="hidden flex-grow animate-fadeIn flex-col space-y-8">
+                
+                <!-- TOP ROW: Yield Predictions & AI Diagnostic Text -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    
+                    <!-- Left Block: Yield Predictions -->
+                    <div class="lg:col-span-4 flex flex-col space-y-4">
+                        <div id="yieldBox" class="bg-gray-100 dark:bg-gray-700 p-5 rounded-lg text-center transition-all duration-500 shadow-sm border border-transparent h-full flex flex-col justify-center">
+                            <p id="yieldLabel" class="text-sm text-gray-500 dark:text-gray-300 font-semibold uppercase mb-1">Est. Yield</p>
+                            <p id="yieldValue" class="text-3xl font-bold text-gray-800 dark:text-white">--</p>
+                        </div>
+                        <div class="bg-blue-50 dark:bg-blue-900/30 p-5 rounded-lg text-center transition-all duration-500 shadow-sm border border-blue-100 dark:border-blue-800 h-full flex flex-col justify-center">
+                            <p class="text-sm text-blue-800 dark:text-blue-300 font-semibold uppercase mb-1">Est. Harvest</p>
+                            <p id="harvestTimeValue" class="text-3xl font-bold text-blue-900 dark:text-blue-100">--</p>
+                        </div>
+                    </div>
+
+                    <!-- Right Block (Top Row): AI Diagnostic Text -->
+                    <div class="lg:col-span-8 flex flex-col space-y-4">
+                        <div>
+                            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">AI Diagnostic: <span id="analyzedTime" class="text-green-600 dark:text-green-400 font-normal ml-1"></span></h3>
+                            <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600 transition-colors">
+                                <p id="justificationShort" class="text-gray-800 dark:text-gray-200 text-sm font-medium leading-relaxed">Generating...</p>
+                                <p id="justificationDetail" class="text-gray-600 dark:text-gray-400 text-sm mt-3 hidden border-t border-gray-200 dark:border-gray-600 pt-3 leading-relaxed"></p>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Prescriptive Suggestions:</h3>
+                            <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600 transition-colors">
+                                <p id="suggestionsShort" class="text-gray-800 dark:text-gray-200 text-sm font-medium leading-relaxed">Generating...</p>
+                                <p id="suggestionsDetail" class="text-gray-600 dark:text-gray-400 text-sm mt-3 hidden border-t border-gray-200 dark:border-gray-600 pt-3 leading-relaxed"></p>
+                            </div>
+                        </div>
+                        
+                        <button id="readMoreBtn" type="button" class="text-sm text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 font-semibold focus:outline-none text-left py-1 w-fit">
+                            + Read Detailed Analysis
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- BOTTOM ROW: Full Width Chatbot -->
+                <div class="flex flex-col border-t border-gray-200 dark:border-gray-700 pt-6 h-[400px]">
+                    <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Follow-up Agronomist Chat</h3>
+                    
+                    <div id="chatBox" class="flex-grow overflow-y-auto bg-gray-50 dark:bg-gray-700 rounded border border-gray-200 dark:border-gray-600 p-4 mb-3 space-y-4 text-sm transition-colors">
+                        <div class="text-gray-400 text-center py-4">Ask a question contextually tied to this log entry!</div>
+                    </div>
+
+                    <div id="chatLoader" class="hidden text-xs text-green-700 dark:text-green-400 font-medium italic mb-2 px-1 flex items-center">
+                        <svg class="animate-spin -ml-1 mr-1.5 h-3.5 w-3.5 text-green-600 dark:text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        AgriVolt AI is calculating...
+                    </div>
+
+                    <div class="flex space-x-2">
+                        <input type="text" id="chatMessage" placeholder="Ask about this specific log status..." class="flex-grow text-sm border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded p-3 focus:ring-2 focus:ring-green-500 transition">
+                        <button id="sendChatBtn" class="bg-gray-900 dark:bg-gray-700 hover:bg-black dark:hover:bg-gray-600 text-white text-sm font-bold py-3 px-6 rounded transition">
+                            Send
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // --- ENTERPRISE PASSKEY CHECK ---
+        const ENTERPRISE_KEY = "ENTERPRISE2026"; // Set your desired demo passcode here
+
+        function checkAuthStatus() {
+            const isAuthed = sessionStorage.getItem('agrivolt_enterprise_auth');
+            if (isAuthed === 'true') {
+                document.getElementById('authModal').classList.add('hidden');
+            }
+        }
+
+        function handleAuth(e) {
+            e.preventDefault();
+            const input = document.getElementById('passkeyInput').value.trim();
+            const errorMsg = document.getElementById('authError');
+
+            if (input === ENTERPRISE_KEY) {
+                sessionStorage.setItem('agrivolt_enterprise_auth', 'true');
+                document.getElementById('authModal').classList.add('hidden');
+                errorMsg.classList.add('hidden');
+            } else {
+                errorMsg.classList.remove('hidden');
+            }
+        }
+
+        // Run check immediately on load
+        checkAuthStatus();
+
+        // Global storage variables to maintain chatbot session context
+        let activeTelemetryLog = null;
+
+        // --- 1. DARK MODE LOGIC ---
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const darkIcon = document.getElementById('theme-toggle-dark-icon');
+        const lightIcon = document.getElementById('theme-toggle-light-icon');
+
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            lightIcon.classList.remove('hidden');
+            document.documentElement.classList.add('dark');
+        } else {
+            darkIcon.classList.remove('hidden');
+            document.documentElement.classList.remove('dark');
+        }
+
+        themeToggleBtn.addEventListener('click', function() {
+            darkIcon.classList.toggle('hidden');
+            lightIcon.classList.toggle('hidden');
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('color-theme', 'light');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('color-theme', 'dark');
+            }
+        });
+
+        // --- 2. WEBSOCKET LOGIC (LIVE TELEMETRY) ---
+        const ws = new WebSocket("ws://127.0.0.1:8000/ws/live-telemetry");
+        
+        ws.onopen = () => {
+            document.getElementById('liveStatus').innerText = "LIVE";
+            document.getElementById('liveStatus').classList.remove('text-red-500');
+            document.getElementById('liveStatus').classList.add('text-green-500');
+            fetchHistory();
+        };
+
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            document.getElementById('liveTemp').innerText = data.temperature_c + " °C";
+            document.getElementById('liveMoisture').innerText = data.soil_moisture + " %";
+            document.getElementById('liveShading').innerText = data.shading_percent + " %";
+            document.getElementById('liveTime').innerText = "Last Updated: " + data.timestamp;
+            fetchHistory();
+        };
+
+        ws.onclose = () => {
+            document.getElementById('liveStatus').innerText = "OFFLINE";
+            document.getElementById('liveStatus').classList.remove('text-green-500');
+            document.getElementById('liveStatus').classList.add('text-red-500');
+        };
+
+        // --- 3. FETCH HISTORY LOG ---
+        async function fetchHistory() {
+            try {
+                const response = await fetch("http://127.0.0.1:8000/api/telemetry/history");
+                const result = await response.json();
+                const container = document.getElementById('historyContainer');
+                container.innerHTML = "";
+
+                if (result.data.length === 0) {
+                    container.innerHTML = `<div class="text-center text-gray-400 dark:text-gray-500 py-10 text-sm">No historical data found.</div>`;
+                    return;
+                }
+
+                result.data.forEach(log => {
+                    const card = document.createElement('div');
+                    card.className = "bg-gray-50 dark:bg-gray-700 p-3 rounded border border-gray-200 dark:border-gray-600 flex justify-between items-center transition-colors";
+                    
+                    textDiv = document.createElement('div');
+                    textDiv.innerHTML = `
+                        <p class="text-sm font-bold text-gray-900 dark:text-white">${log.timestamp}</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">${log.temperature_c}°C | ${log.soil_moisture}% Moist | ${log.shading_percent}% Shade</p>
+                    `;
+
+                    const btn = document.createElement('button');
+                    btn.className = "bg-green-600 hover:bg-green-700 text-white text-xs font-bold py-2 px-4 rounded transition ml-2";
+                    btn.innerText = "Analyze";
+                    btn.onclick = () => runAIDiagnostic(log);
+
+                    card.appendChild(textDiv);
+                    card.appendChild(btn);
+                    container.appendChild(card);
+                });
+            } catch (e) {
+                console.error("Failed to fetch history", e);
+            }
+        }
+
+        // --- 4. TRIGGER AI DIAGNOSTIC ---
+        async function runAIDiagnostic(logData) {
+            activeTelemetryLog = logData; // cache parameters for current chatbot sessions
+            
+            document.getElementById('aiEmptyState').classList.add('hidden');
+            
+            const resultsContainer = document.getElementById('aiResultsContainer');
+            resultsContainer.classList.remove('hidden');
+            resultsContainer.classList.add('flex'); // Ensure flex is applied for the stacked layout
+            
+            document.getElementById('analyzedTime').innerText = `(@ ${logData.timestamp})`;
+            document.getElementById('justificationShort').innerText = "Running Gemini Engine...";
+            document.getElementById('suggestionsShort').innerText = "Analyzing parameters...";
+            document.getElementById('yieldValue').innerText = "Calc...";
+            document.getElementById('harvestTimeValue').innerText = "...";
+            
+            document.getElementById('chatBox').innerHTML = `<div class="text-gray-400 text-center py-2">Session synchronized to data logged at ${logData.timestamp}. Ask a question below!</div>`;
+
+            document.getElementById('justificationDetail').classList.add('hidden');
+            document.getElementById('suggestionsDetail').classList.add('hidden');
+            document.getElementById('readMoreBtn').innerText = "+ Read Detailed Analysis";
+
+            const yieldBox = document.getElementById('yieldBox');
+            const yieldLabel = document.getElementById('yieldLabel');
+            const yieldText = document.getElementById('yieldValue');
+            yieldBox.className = "bg-gray-100 dark:bg-gray-700 p-5 rounded-lg text-center transition-all duration-500 shadow-sm border border-transparent h-full flex flex-col justify-center";
+            yieldLabel.className = "text-sm text-gray-500 dark:text-gray-300 font-semibold uppercase mb-1";
+            yieldText.className = "text-3xl font-bold text-gray-800 dark:text-white";
+
+            const cropType = document.getElementById('targetCrop').value;
+            const payload = {
+                crop_type: cropType,
+                shading_percent: logData.shading_percent,
+                temperature_c: logData.temperature_c,
+                soil_moisture: logData.soil_moisture,
+                is_micro_farm: false,
+                growing_area: 1
+            };
+
+            try {
+                const yieldRes = await fetch("http://127.0.0.1:8000/api/predict", {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const yieldData = await yieldRes.json();
+                if (!yieldData.error) {
+                    document.getElementById('yieldValue').innerText = `${yieldData.yield_kg_m2} kg/m²`;
+                } else {
+                    document.getElementById('yieldValue').innerText = "Err";
+                }
+            } catch (e) {
+                document.getElementById('yieldValue').innerText = "Off";
+            }
+
+            const diagnosticPrompt = `Act as an automated diagnostic system. Based on the provided farm data, structure your response EXACTLY with these 6 headers:
+Status: [Green, Yellow, or Red]
+Harvest Time: [Estimated time to harvest in days, e.g., 55-65 Days]
+Short Justification: [1 concise sentence summarizing the core issue or success]
+Detailed Justification: [A 2-sentence detailed explanation of the microclimate performance]
+Short Suggestions: [1 concise sentence summarizing the main action to take]
+Detailed Suggestions: [2 highly specific, actionable bullet points to improve or maintain yield]
+CRITICAL: Do not use any Markdown formatting (* or #). Use plain text only.`;
+
+            try {
+                const aiRes = await fetch("http://127.0.0.1:8000/api/chat", {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ...payload, user_message: diagnosticPrompt })
+                });
+                
+                const aiData = await aiRes.json();
+                const replyText = aiData.reply.trim();
+
+                const statusMatch = replyText.match(/Status:\s*(Green|Yellow|Red)/i);
+                const harvestMatch = replyText.match(/Harvest Time:\s*(.*?)(?=Short Justification:)/is);
+                const shortJustMatch = replyText.match(/Short Justification:\s*(.*?)(?=Detailed Justification:)/is);
+                const detailJustMatch = replyText.match(/Detailed Justification:\s*(.*?)(?=Short Suggestions:)/is);
+                const shortSuggMatch = replyText.match(/Short Suggestions:\s*(.*?)(?=Detailed Suggestions:)/is);
+                const detailSuggMatch = replyText.match(/Detailed Suggestions:\s*(.*)/is);
+
+                let statusColor = statusMatch ? statusMatch[1].toLowerCase() : "gray";
+                
+                yieldBox.className = "p-5 rounded-lg text-center transition-all duration-500 shadow-md border h-full flex flex-col justify-center";
+                yieldLabel.className = "text-sm font-semibold uppercase mb-1";
+                yieldText.className = "text-3xl font-bold";
+
+                if (statusColor === "green") {
+                    yieldBox.classList.add("bg-gradient-to-br", "from-green-100", "to-green-300", "dark:from-green-900", "dark:to-green-700", "border-green-200", "dark:border-green-800");
+                    yieldLabel.classList.add("text-green-800", "dark:text-green-300");
+                    yieldText.classList.add("text-green-900", "dark:text-green-100");
+                } else if (statusColor === "yellow") {
+                    yieldBox.classList.add("bg-gradient-to-br", "from-yellow-100", "to-yellow-300", "dark:from-yellow-900", "dark:to-yellow-700", "border-yellow-200", "dark:border-yellow-800");
+                    yieldLabel.classList.add("text-yellow-800", "dark:text-yellow-300");
+                    yieldText.classList.add("text-yellow-900", "dark:text-yellow-100");
+                } else if (statusColor === "red") {
+                    yieldBox.classList.add("bg-gradient-to-br", "from-red-100", "to-red-300", "dark:from-red-900", "dark:to-red-700", "border-red-200", "dark:border-red-800");
+                    yieldLabel.classList.add("text-red-800", "dark:text-red-300");
+                    yieldText.classList.add("text-red-900", "dark:text-red-100");
+                }
+
+                document.getElementById('harvestTimeValue').innerText = harvestMatch ? harvestMatch[1].trim() : "N/A";
+                document.getElementById('justificationShort').innerText = shortJustMatch ? shortJustMatch[1].trim() : "Analysis complete.";
+                document.getElementById('justificationDetail').innerText = detailJustMatch ? detailJustMatch[1].trim() : "";
+                document.getElementById('suggestionsShort').innerText = shortSuggMatch ? shortSuggMatch[1].trim() : "Review parameters.";
+                document.getElementById('suggestionsDetail').innerText = detailSuggMatch ? detailSuggMatch[1].trim() : "";
+
+            } catch (e) {
+                document.getElementById('justificationShort').innerText = "AI Connection Error.";
+                document.getElementById('suggestionsShort').innerText = "Make sure the backend is active.";
+            }
+        }
+
+        // --- 5. CHATBOT INTERACTIVE INTERFACE ---
+        document.getElementById('sendChatBtn').addEventListener('click', async () => {
+            const chatInput = document.getElementById('chatMessage');
+            const messageText = chatInput.value.trim();
+            if (!messageText || !activeTelemetryLog) return;
+
+            appendChatMessage("You", messageText, "bg-blue-100 text-blue-900 self-end ml-10");
+            chatInput.value = ''; 
+
+            const cropType = document.getElementById('targetCrop').value;
+            const payload = {
+                crop_type: cropType,
+                shading_percent: activeTelemetryLog.shading_percent,
+                temperature_c: activeTelemetryLog.temperature_c,
+                soil_moisture: activeTelemetryLog.soil_moisture,
+                user_message: messageText
+            };
+            
+            const chatLoader = document.getElementById('chatLoader');
+            chatLoader.classList.remove('hidden');
+
+            try {
+                const response = await fetch("http://127.0.0.1:8000/api/chat", {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+                
+                chatLoader.classList.add('hidden');
+                const cleanReply = data.reply.replace(/[*#]/g, '');
+                appendChatMessage("AgriVolt AI", cleanReply, "bg-green-100 text-green-900 self-start mr-10");
+            } catch (error) {
+                chatLoader.classList.add('hidden');
+                appendChatMessage("System Error", "Could not reach backend.", "bg-red-100 text-red-900");
+            }
+        });
+
+        document.getElementById('chatMessage').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                document.getElementById('sendChatBtn').click();
+            }
+        });
+
+        function appendChatMessage(sender, text, classes) {
+            const chatBox = document.getElementById('chatBox');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `p-3 rounded-lg w-fit max-w-[80%] ${classes}`;
+            msgDiv.innerHTML = `<strong>${sender}:</strong> <p class="mt-1 whitespace-pre-wrap">${text}</p>`;
+            chatBox.appendChild(msgDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // --- 6. READ MORE TOGGLE ---
+        document.getElementById('readMoreBtn').addEventListener('click', function() {
+            const justDetail = document.getElementById('justificationDetail');
+            const suggDetail = document.getElementById('suggestionsDetail');
+            
+            if (justDetail.classList.contains('hidden')) {
+                justDetail.classList.remove('hidden');
+                suggDetail.classList.remove('hidden');
+                this.innerText = "- Show Less";
+            } else {
+                justDetail.classList.add('hidden');
+                suggDetail.classList.add('hidden');
+                this.innerText = "+ Read Detailed Analysis";
+            }
+        });
+    </script>
+</body>
+</html>
