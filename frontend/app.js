@@ -122,13 +122,16 @@ document.getElementById('predictionForm').addEventListener('submit', async (e) =
         const data = await response.json();
         const replyText = data.reply.trim();
         
-        // Parse out the sections using Regex
-        const statusMatch = replyText.match(/Status:\s*(Green|Yellow|Red)/i);
-        const harvestMatch = replyText.match(/Harvest Time:\s*(.*?)(?=Short Justification:)/is);
-        const shortJustMatch = replyText.match(/Short Justification:\s*(.*?)(?=Detailed Justification:)/is);
-        const detailJustMatch = replyText.match(/Detailed Justification:\s*(.*?)(?=Short Suggestions:)/is);
-        const shortSuggMatch = replyText.match(/Short Suggestions:\s*(.*?)(?=Detailed Suggestions:)/is);
-        const detailSuggMatch = replyText.match(/Detailed Suggestions:\s*(.*)/is);
+        // FIX: Strip out Markdown bolding (*), headers (#), and bullet formatting before RegEx matching
+        const cleanReplyText = replyText.replace(/[*#]/g, '');
+
+        // Parse out the sections using Regex on cleanReplyText
+        const statusMatch = cleanReplyText.match(/Status:\s*(Green|Yellow|Red)/i);
+        const harvestMatch = cleanReplyText.match(/Harvest Time:\s*(.*?)(?=Short Justification:)/is);
+        const shortJustMatch = cleanReplyText.match(/Short Justification:\s*(.*?)(?=Detailed Justification:)/is);
+        const detailJustMatch = cleanReplyText.match(/Detailed Justification:\s*(.*?)(?=Short Suggestions:)/is);
+        const shortSuggMatch = cleanReplyText.match(/Short Suggestions:\s*(.*?)(?=Detailed Suggestions:)/is);
+        const detailSuggMatch = cleanReplyText.match(/Detailed Suggestions:\s*(.*)/is);
 
         // --- Handle Status Color ---
         let statusColor = statusMatch ? statusMatch[1].toLowerCase() : "gray";

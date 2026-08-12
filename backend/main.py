@@ -9,7 +9,9 @@ from fastapi import FastAPI, Depends, HTTPException, WebSocket, WebSocketDisconn
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
-import google.generativeai as genai
+
+# --- NEW SDK IMPORT ---
+from google import genai
 
 # --- SQLALCHEMY IMPORTS ---
 from sqlalchemy import create_engine, Column, Integer, String, Float
@@ -20,8 +22,7 @@ from sqlalchemy.ext.declarative import declarative_base
 # 1. AI Configuration
 # ==========================================
 load_dotenv()
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-model = genai.GenerativeModel('models/gemini-2.5-flash')
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 # ==========================================
 # 2. Server Setup
@@ -39,7 +40,7 @@ app.add_middleware(
 # ==========================================
 # 3. SQLite Database Setup
 # ==========================================
-SQLALCHEMY_DATABASE_URL = "sqlite:////data/agrivolt.db"
+SQLALCHEMY_DATABASE_URL = "sqlite:///./agrivolt.db"
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -55,7 +56,7 @@ class PartnershipDB(Base):
     email = Column(String)
     solar_acreage = Column(String)
 
-# NEW: Telemetry History Table
+# Telemetry History Table
 class TelemetryLogDB(Base):
     __tablename__ = "telemetry_logs"
     
@@ -102,7 +103,7 @@ class PartnershipRequest(BaseModel):
 
 
 # ==========================================
-# 6. NEW: WebSocket Manager & Background Task
+# 6. WebSocket Manager & Background Task
 # ==========================================
 class ConnectionManager:
     def __init__(self):
@@ -214,14 +215,17 @@ async def chat_with_agronomist(data: FarmData):
     - Ambient Temperature: {data.temperature_c}°C
     - Soil Moisture: {data.soil_moisture}%
     
-    The farmer is asking the following question: "{data.user_message}"
-    
-    Provide a helpful, direct, and scientifically accurate response based on their specific crop and current environmental metrics. Keep the response concise and actionable.
+    Task/Question: {data.user_message}
     """
     try:
-        response = model.generate_content(system_prompt)
+        # Generate content asynchronously using the new v2 SDK
+        response = await client.aio.models.generate_content(
+            model='gemini-3.5-flash', 
+            contents=system_prompt,
+        )
         return {"reply": response.text}
     except Exception as e:
+        print(f"AI API Error: {str(e)}") # Prints error to your local terminal
         return {"reply": f"System Error: {str(e)}"}
 
 # ==========================================
@@ -255,11 +259,3 @@ async def get_all_partnerships(db: Session = Depends(get_db)):
         return {"total": len(partnerships), "data": partnerships}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Database read error: {str(e)}")
-    
-    
-# ==========================
-# ENDPOINT 7: ONLINE HOSTING
-# ==========================
-
-from fastapi.staticfiles import StaticFiles
-app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
